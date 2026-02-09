@@ -17,6 +17,7 @@ import {BookIcon, HomeIcon} from "lucide-react";
 import {Layout} from "@/components/refine-ui/layout/layout.tsx";
 import SubjectList from "@/pages/subjects/list.tsx";
 import SubjectCreate from "@/pages/subjects/create.tsx";
+import.meta.env.VITE_BACKEND_BASE_URL
 
 function App() {
   return (

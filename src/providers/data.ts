@@ -1,24 +1,72 @@
-import {BaseRecord, DataProvider, GetListParams, GetListResponse} from "@refinedev/core";
+import {createDataProvider, CreateDataProviderOptions} from "@refinedev/rest";
+import {BACKEND_BASE_URL} from "@/constants";
+import {ListResponse} from "@/types";
 
-
-export  const dataProvider: DataProvider = {
-  getList: async <TData extends BaseRecord = BaseRecord>({ resource } : GetListParams): Promise<GetListResponse<TData>> => {
-    // Implement your data fetching logic here
-
-    if (resource !== "subjects") {
-      return { data: [] as TData[], total: 0 };
-    }
-
-    return  {
-      data: [],
-        total: 0
-    }
-  },
-
-  getOne: async () => {throw new Error("Method not implemented.")},
-  create: async () => {throw new Error("Method not implemented.")},
-  update: async () => {throw new Error("Method not implemented.")},
-  deleteOne: async () => {throw new Error("Method not implemented.")},
-
-  getApiUrl: () => ""
+if(!BACKEND_BASE_URL){
+  throw new Error("BACKEND_BASE_URL environment variable is missing");
 }
+
+const options: CreateDataProviderOptions = {
+  getList: {
+    getEndpoint: ({ resource }) => resource,
+
+    buildQueryParams: async ({  resource, pagination, filters }) => {
+      const params: Record<string, string | number> = {};
+
+      if (pagination?.mode !== "off") {
+        const page = pagination?.currentPage ?? 1;
+        const pageSize = pagination?.pageSize ?? 10;
+
+        params.page = page;
+        params.limit = pageSize;
+      }
+
+      filters?.forEach((filter) => {
+        const field = "field" in filter ? filter.field : "";
+        const value = String(filter.value);
+
+        if (field === "role") {
+          params.role = value;
+        }
+
+        if (resource === "departments") {
+          if (field === "name" || field === "code") params.search = value;
+        }
+
+        if (resource === "users") {
+          if (field === "search" || field === "name" || field === "email") {
+            params.search = value;
+          }
+        }
+
+        if (resource === "subjects") {
+          if (field === "department") params.department = value;
+          if (field === "name" || field === "code") params.search = value;
+        }
+
+        if (resource === "classes") {
+          if (field === "name") params.search = value;
+          if (field === "subject") params.subject = value;
+          if (field === "teacher") params.teacher = value;
+        }
+      });
+
+      return params;
+    },
+
+    mapResponse: async (resource) => {
+      const payload: ListResponse = await resource.clone().json();
+
+      return payload.data ?? [];
+    },
+
+    getTotalCount: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+      return payload.pagination?.total ?? payload.data?.length ?? 0;
+    },
+  }
+}
+
+const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options)
+
+export { dataProvider }
