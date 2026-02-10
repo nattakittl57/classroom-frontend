@@ -21,6 +21,15 @@ import ClassesList from "@/pages/classes/list.tsx";
 import ClassesCreate from "@/pages/classes/create.tsx";
 
 
+/**
+ * Root application component that configures providers, routing, and Refine resources.
+ *
+ * Sets up BrowserRouter, UI and devtools providers, Refine configuration (data provider,
+ * notification provider, router integration, options, and resources), and the app's route
+ * hierarchy including dashboard, subjects, and classes pages.
+ *
+ * @returns The React element tree composing the application (router, providers, Refine, routes, and devtools).
+ */
 function App() {
   return (
     <BrowserRouter>
