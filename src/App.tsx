@@ -19,7 +19,7 @@ import SubjectList from "@/pages/subjects/list.tsx";
 import SubjectCreate from "@/pages/subjects/create.tsx";
 import ClassesList from "@/pages/classes/list.tsx";
 import ClassesCreate from "@/pages/classes/create.tsx";
-import.meta.env.VITE_BACKEND_BASE_URL
+
 
 function App() {
   return (

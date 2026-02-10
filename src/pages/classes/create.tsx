@@ -45,7 +45,7 @@ const ClassesCreate = () => {
 
     const onSubmit = async (values: z.infer<typeof classSchema>) => {
         try {
-            console.log(values);
+            await onFinish(values);
         } catch (error) {
             console.error("Error creating class:", error);
         }
@@ -80,7 +80,7 @@ const ClassesCreate = () => {
     const subjects = subjectsQuery.data?.data || [];
     const subjectsLoading = subjectsQuery.isLoading;
 
-    const setBannerImage = (file: { url: string; publicId: string }, field: any) => {
+    const setBannerImage = (file: { url: string; publicId: string } | null, field: { onChange: (value: string) => void }) => {
 
         if (file) {
             field.onChange(file.url);
@@ -142,7 +142,7 @@ const ClassesCreate = () => {
                                                             }
                                                             : null
                                                     }
-                                                    onChange={(file: any, field: any) => setBannerImage(file, field)}
+                                                    onChange={(file) => setBannerImage(file, field)}
                                                 />
                                             </FormControl>
                                             <FormMessage />

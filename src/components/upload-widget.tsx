@@ -84,7 +84,18 @@ const UploadWidget = ({
         setIsRemoving(true);
 
         try {
+            if (deleteToken) {
+                const params = new URLSearchParams();
+                params.append("token", deleteToken);
 
+                await fetch(
+                    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/delete_by_token`,
+                    {
+                        method: "POST",
+                        body: params,
+                    }
+                );
+            }
         } catch (error) {
             console.error("Failed to remove image from Cloudinary", error);
         } finally {
